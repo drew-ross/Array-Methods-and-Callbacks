@@ -12,12 +12,12 @@ console.log(fifaData);
 (d) Away Team goals for 2014 world cup final
 (e) Winner of 2014 world cup final */
 
-let final2014 = fifaData.find(function(item) {
+let final2014 = fifaData.find(function (item) {
     return (item.Year === 2014 && item.Stage === 'Final');
 });
 
 function findWinner(game) {
-    if(game["Home Team Goals"] > game["Away Team Goals"]) {
+    if (game["Home Team Goals"] > game["Away Team Goals"]) {
         return game["Home Team Name"];
     } else {
         return game["Away Team Name"];
@@ -45,7 +45,7 @@ console.log(getFinals(fifaData));
 function getYears(data, callback) {
     const years = [];
     const newData = callback(data);
-    newData.forEach(function(item) {
+    newData.forEach(function (item) {
         years.push(item.Year);
     })
     return years;
@@ -54,13 +54,13 @@ function getYears(data, callback) {
 console.log("getYears");
 console.log(getYears(fifaData, getFinals));
 
-/* Task 5: Impliment a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */ 
+/* Task 5: Impliment a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */
 
 function getWinners(data, callback) {
     const winners = [];
     const newData = callback(data);
-    newData.forEach(function(item) {
-        if(item["Home Team Goals"] > item["Away Team Goals"]) {
+    newData.forEach(function (item) {
+        if (item["Home Team Goals"] > item["Away Team Goals"]) {
             winners.push(item["Home Team Name"]);
         } else {
             winners.push(item["Away Team Name"]);
@@ -82,7 +82,7 @@ Parameters:
 function getAllWinners(data, cbGetFinals, cbFindWinner) {
     const finals = cbGetFinals(data);
     const winners = [];
-    finals.forEach(function(item) {
+    finals.forEach(function (item) {
         const year = item.Year;
         const winner = cbFindWinner(item);
         winners.push(`In ${year}, the winner was ${winner}`);
@@ -99,7 +99,7 @@ Hint: use `.reduce` */
 
 function getCountryWins(data, teamInitials, cbGetFinals) {
     const finals = cbGetFinals(data);
-    const wins = finals.reduce(function(total, current) {
+    const wins = finals.reduce(function (total, current) {
         const homeWins = (current["Home Team Goals"] > current["Away Team Goals"]);
         if ((homeWins && current["Home Team Initials"] === teamInitials) || !homeWins && current["Away Team Initials"] === teamInitials) {
             return total + 1;
@@ -122,7 +122,7 @@ function getGoals(data, callback) {
     const newData = [];
     let highestAverage = 0;
     const teamsWithHighest = [];
-    finals.forEach(function(item) {
+    finals.forEach(function (item) {
         if (!names.find(name => item["Home Team Name"] === name)) {
             names.push(item["Home Team Name"]);
         }
@@ -130,15 +130,15 @@ function getGoals(data, callback) {
             names.push(item["Away Team Name"]);
         }
     })
-    names.forEach(function(item) {
-        newData.push({country: item, appear: 0, score: 0});
+    names.forEach(function (item) {
+        newData.push({ country: item, appear: 0, score: 0 });
     })
-    finals.forEach(function(item) {
+    finals.forEach(function (item) {
         const homeName = item["Home Team Name"];
         const awayName = item["Away Team Name"];
         const homeScore = item["Home Team Goals"];
         const awayScore = item["Away Team Goals"];
-        newData.forEach(function(item) {
+        newData.forEach(function (item) {
             if (item.country === homeName) {
                 item.appear += 1;
                 item.score += homeScore;
@@ -148,16 +148,16 @@ function getGoals(data, callback) {
             }
         })
     })
-    newData.forEach(function(item) {
+    newData.forEach(function (item) {
         const average = item.score / item.appear;
         item.average = average;
     })
-    newData.forEach(function(item) {
+    newData.forEach(function (item) {
         if (item.average > highestAverage) {
             highestAverage = item.average;
         }
     })
-    newData.forEach(function(item) {
+    newData.forEach(function (item) {
         if (item.average === highestAverage) {
             teamsWithHighest.push(item.country);
         }
@@ -171,13 +171,57 @@ console.log(getGoals(fifaData, getFinals));
 
 /* Task 9: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(data) {
-
-    /* code here */
-
+function badDefense(data, callback) {
+    const finals = callback(data);
+    const names = [];
+    const newData = [];
+    let highestAverage = 0;
+    const teamsWithHighest = [];
+    finals.forEach(function (item) {
+        if (!names.find(name => item["Home Team Name"] === name)) {
+            names.push(item["Home Team Name"]);
+        }
+        if (!names.find(name => item["Away Team Name"] === name)) {
+            names.push(item["Away Team Name"]);
+        }
+    })
+    names.forEach(function (item) {
+        newData.push({ country: item, appear: 0, againstScore: 0 });
+    })
+    finals.forEach(function (item) {
+        const homeName = item["Home Team Name"];
+        const awayName = item["Away Team Name"];
+        const homeScore = item["Home Team Goals"];
+        const awayScore = item["Away Team Goals"];
+        newData.forEach(function (item) {
+            if (item.country === homeName) {
+                item.appear += 1;
+                item.againstScore += awayScore;
+            } else if (item.country === awayName) {
+                item.appear += 1;
+                item.againstScore += homeScore;
+            }
+        })
+    })
+    newData.forEach(function (item) {
+        const average = item.againstScore / item.appear;
+        item.average = average;
+    })
+    newData.forEach(function (item) {
+        if (item.average > highestAverage) {
+            highestAverage = item.average;
+        }
+    })
+    newData.forEach(function (item) {
+        if (item.average === highestAverage) {
+            teamsWithHighest.push(item.country);
+        }
+    })
+    console.log(newData);
+    return teamsWithHighest;
 };
 
-badDefense();
+console.log(badDefense(fifaData, getFinals));
 
 
 /* Task 10: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */

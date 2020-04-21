@@ -123,10 +123,10 @@ function getGoals(data, callback) {
     let highestAverage = 0;
     const teamsWithHighest = [];
     finals.forEach(function (item) {
-        if (!names.find(name => item["Home Team Name"] === name)) {
+        if (!names.includes(item["Home Team Name"])) {
             names.push(item["Home Team Name"]);
         }
-        if (!names.find(name => item["Away Team Name"] === name)) {
+        if (!names.includes(item["Away Team Name"])) {
             names.push(item["Away Team Name"]);
         }
     })
@@ -174,14 +174,15 @@ console.log(getGoals(fifaData, getFinals));
 function badDefense(data, callback) {
     const finals = callback(data);
     const names = [];
+    console.log(finals);
     const newData = [];
     let highestAverage = 0;
     const teamsWithHighest = [];
     finals.forEach(function (item) {
-        if (!names.find(name => item["Home Team Name"] === name)) {
+        if (!names.includes(item["Home Team Name"])) {
             names.push(item["Home Team Name"]);
         }
-        if (!names.find(name => item["Away Team Name"] === name)) {
+        if (!names.includes(item["Away Team Name"])) {
             names.push(item["Away Team Name"]);
         }
     })
